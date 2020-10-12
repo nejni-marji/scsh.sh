@@ -1,17 +1,33 @@
 #!/bin/sh
 
+# Image viewer
 VIEWER=imv
 
+# Folder to save screenshots in
 FOLDER="$HOME/screenshot"
+
+# Current date and time, used for filenames
 DATE=$(date +"%Y-%m-%dT%H-%M-%S.%N")
 
+# Clipboard manager
 CLIP=wl-copy
 
+# Notification settings
+# Enable notifications
 NOTIFY=1
 CATEGORY="screenshot"
+# Notification timeout in ms
 NOTIFY_TIMEOUT=10000
 
+# Name of saved file, overwritten in window screenshot
 OUTPUT="$FOLDER/$DATE.png"
+
+send_notify() {
+    MSG=$1
+    if [ ! -z "$NOTIFY" ]; then
+        notify-send -t $NOTIFY_TIMEOUT -c $CATEGORY "scsh.sh" "$MSG"
+    fi
+}
 
 if [ ! -d $FOLDER ] 
 then
@@ -39,51 +55,37 @@ shift `expr $OPTIND - 1`
 case $1 in
 	all)
 		grim $OUTPUT
-        if [ ! -z "$NOTIFY" ]; then
-            notify-send -t $NOTIFY_TIMEOUT -c $CATEGORY "scsh.sh" "Screenshot All\n$OUTPUT"
-        fi
+        send_notify "Screenshot All\n$OUTPUT"
 		;;
 	area)
 		grim -g "$(slurp)" $OUTPUT
-        if [ ! -z "$NOTIFY" ]; then
-            notify-send -t $NOTIFY_TIMEOUT -c $CATEGORY "scsh.sh" "Screenshot Area\n$OUTPUT"
-        fi
+        send_notify "Screenshot Area\n$OUTPUT"
 		;;
 	window)
         NAME=$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .name')
         WINDOW=$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')
         OUTPUT="$FOLDER/$DATE-$NAME.png"
 		grim -g "$WINDOW" $OUTPUT
-        if [ ! -z "$NOTIFY" ]; then
-            notify-send -t $NOTIFY_TIMEOUT -c $CATEGORY "scsh.sh" "Screenshot Window $NAME\n$OUTPUT"
-        fi
+        send_notify "Screenshot Window $NAME\n$OUTPUT"
 		;;
     last)
         LAST=$(ls -t $FOLDER | head -n1)
         $VIEWER "$FOLDER/$LAST"
-        if [ ! -z "$NOTIFY" ]; then
-            notify-send -t $NOTIFY_TIMEOUT -c $CATEGORY "scsh.sh" "Opening image\n$FOLDER/$LAST"
-        fi
+        send_notify "Opening image\n$FOLDER/$LAST"
         ;;      
     clip-last)
         LAST=$(ls -t $FOLDER | head -n1)
         cat "$FOLDER/$LAST" | $CLIP
-        if [ ! -z "$NOTIFY" ]; then
-            notify-send -t $NOTIFY_TIMEOUT -c $CATEGORY "scsh.sh" "Copied last image to clipboard\n$FOLDER/$LAST"
-        fi
+        send_notify "Copied last image to clipboard\n$FOLDER/$LAST"
         ;;
     clip-area)
         grim -g "$(slurp)" - | $CLIP
-        if [ ! -z "$NOTIFY" ]; then
-            notify-send -t $NOTIFY_TIMEOUT -c $CATEGORY "scsh.sh" "Screenshot area to clipboard\n"
-        fi
+        send_notify "Screenshot area to clipboard\n"
         ;;
     last-file)
         LAST=$(ls -t $FOLDER | head -n1)
         $CLIP "$FOLDER/$LAST"
-        if [ ! -z "$NOTIFY" ]; then
-            notify-send -t $NOTIFY_TIMEOUT -c $CATEGORY "scsh.sh" "Copied name of last screenshot to clipboard\n$FOLDER/$LAST"
-        fi
+        send_notify "Copied name of last screenshot to clipboard\n$FOLDER/$LAST"
         ;;
 	*)
 		echo "Unrecognized command: $1"
