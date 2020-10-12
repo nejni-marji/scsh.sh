@@ -2,22 +2,23 @@
 Small screenshot script for use with wayland, specifically sway
 
 ## Dependencies
-### Entire screen
-grim
-### Area
-slurp
+### Screenshot
+- grim
 
-### Window
-jq
-swaymsg
+### Area select tool
+- slurp
+
+### Window select tools
+- jq
+- swaymsg
 
 ### View last image
-imv
+- imv
 
 ### Copy any information to clipboard
-wl-copy
+- wl-copy
 
 ### Send notification on action
-notify-send
+- notify-send
 
 
