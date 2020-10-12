@@ -4,7 +4,7 @@
 VIEWER=imv
 
 # Folder to save screenshots in
-FOLDER="$HOME/screenshot"
+FOLDER="$HOME/screenshots"
 
 # Current date and time, used for filenames
 DATE=$(date +"%Y-%m-%dT%H-%M-%S.%N")
