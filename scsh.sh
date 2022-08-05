@@ -12,10 +12,13 @@ esac
 VIEWER=imv
 
 # Folder to save screenshots in
-FOLDER="$HOME/screenshots"
+FOLDER="$HOME/Pictures/Screenshots/"
+if not [[ -d $FOLDER ]] ; then
+	mkdir -p $FOLDER
+fi
 
 # Current date and time, used for filenames
-DATE=$(date +"%Y-%m-%dT%H-%M-%S.%N")
+DATE=$(date +"%Y%M%d_%H%M%S")
 
 # Clipboard manager
 CLIP=wl-copy
