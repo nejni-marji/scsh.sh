@@ -1,5 +1,13 @@
 #!/bin/sh
 
+# Add some help text.
+case $1 in
+	help|-h|--help)
+		echo "Usage: $0 [all|area|window|last|clip-last|clip-area|last-file"
+		exit
+		;;
+esac
+
 # Image viewer
 VIEWER=imv
 
